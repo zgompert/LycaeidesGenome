@@ -26,4 +26,25 @@ RepeatMasker -s -e ncbi -xsmall -pa 48 -lib consensi.fa.classified mod_melissa_b
 RepeatMasker -s -e ncbi -xsmall -pa 48 -lib consensi.fa.classified Lmel_dovetailPacBio_genome.fasta 
 ```
 
-Next, cactus.
+Next, I used cactus (version 1.0.0) to align the (repeat masked) Hi-C and PacBio gap-filled genomes.
+
+```{bash}
+#!/bin/sh 
+#SBATCH --time=240:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks=24
+#SBATCH --account=gompert-np
+#SBATCH --partition=gompert-np
+#SBATCH --job-name=cactus-master
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=zach.gompert@usu.edu
+
+cd /scratch/general/lustre/cactusNp
+
+module load cactus
+
+cactus jobStore /uufs/chpc.utah.edu/common/home/gompert-group3/data/LmelGenome/cactusLmel.txt cactusLmel.hal --maxCores 80   
+
+```
+
+
