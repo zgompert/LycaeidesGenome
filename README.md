@@ -26,7 +26,7 @@ RepeatMasker -s -e ncbi -xsmall -pa 48 -lib consensi.fa.classified mod_melissa_b
 RepeatMasker -s -e ncbi -xsmall -pa 48 -lib consensi.fa.classified Lmel_dovetailPacBio_genome.fasta 
 ```
 
-Next, I used cactus (version 1.0.0) to align the (repeat masked) Hi-C and PacBio gap-filled genomes.
+Next, I used cactus (version 1.0.0) to align the (repeat masked) Hi-C and PacBio gap-filled genomes and extracted the synteny segments.
 
 ```{bash}
 #!/bin/sh 
@@ -44,7 +44,21 @@ cd /scratch/general/lustre/cactusNp
 module load cactus
 
 cactus jobStore /uufs/chpc.utah.edu/common/home/gompert-group3/data/LmelGenome/cactusLmel.txt cactusLmel.hal --maxCores 80   
-
 ```
 
+```{bash}
+#!/bin/sh 
+#SBATCH --time=300:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks=24
+#SBATCH --account=gompert-np
+#SBATCH --partition=gompert-np
+#SBATCH --job-name=cactus-syn
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=zach.gompert@usu.edu
+cd /uufs/chpc.utah.edu/common/home/gompert-group3/data/LmelGenome
 
+~/source/hal/bin/halSynteny --queryGenome l_mel_hic --targetGenome l_mel_pb cactusLmel.hal out_synteny_Lmel.psl
+```
+
+[SynPlotsLmel.R](SynPlotsLmel.R) summaries and plots the results. From the alignment, it appears that the extra size of the PacBio version of the genome is not due to any specific chromosome or the ends of chromosome, but little additions of bases throughout, likely because Ns (gaps) were too small in the HiC Dovetail assembly.
